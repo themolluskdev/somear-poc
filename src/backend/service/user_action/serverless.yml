@@ -1,0 +1,45 @@
+service: somear-useraction-api
+
+frameworkVersion: 3
+
+provider: 
+  name: aws
+  runtime: nodejs16.x
+  stage: dev
+  region: us-west-2
+  timeout: 10
+  enviroment: 
+    MODEL_BUCKET: ${self:custom.modelBucketName}
+    QR_BUCKET: ${self:custom.qrBucketName}
+
+custom:
+  modelBucketName: somear-model-bucket-${self:provider.stage}
+  qrBucketName: somear-qr-bucket-${self:provider.stage}
+
+plugins:
+  - serverless-s3-offline
+  - serverless-mocha-plugin
+  - serverless-offline
+
+functions:
+  somear-useraction-uploadModel:
+    handler: uploadModel.handler
+    description: Upload gtlf/glb models to S3 bucket
+    events:
+      - http:
+          path: /
+          method: post 
+  somear-useraction-downloadQR:
+    handler: downloadQR.handler
+    description: Returns QR code perferred format to client
+    events:
+      - http:
+          path: /
+          method: post
+  somear-useraction-deleteQR:
+    handler: deleteQR.handler
+    description: Deletes model from S3 bucket to remove dynamic url pointing to it
+    events:
+      - http:
+          path: /
+          method: delete

@@ -1,0 +1,13 @@
+
+service: yorcode-backend
+
+frameworkVersion: 3
+
+provider: 
+  name: aws
+  runtime: nodejs16.x
+  stage: dev
+  region: us-west-2
+
+functions:
+  - ${file(./service/user_action/serverless.yml)}
